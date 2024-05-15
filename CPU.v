@@ -169,10 +169,10 @@ module CPU(CLK_IN, GLOBALRESET);
 	// module Comparator(bool_out, data1_in, data2_in);
 	Comparator U8(
 		// Outputs
-		.bool_out(ID_Comparator_out),
+		.out(ID_Comparator_out),
 		// Inputs
-		.data1_in(ID_Reg_1_out),
-		.data2_in(ID_Reg_2_out)
+		.in1(ID_Reg_1_out),
+		.in2(ID_Reg_2_out)
 	);
 
 	// module HazardUnit(IDEXMemRead_in, EXMEMMemRead_in, EXMEMMemToReg_in, IDEXRegt_in, EXMEMRegt_in, IFIDRegs_in, IFIDRegt_in, branch_in, ComparatorResult_in, jmp_in, IFIDWrite_out, PCWrite_out, NOP_out, FLUSH_out);
