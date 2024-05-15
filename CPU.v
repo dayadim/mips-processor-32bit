@@ -107,7 +107,6 @@ module CPU(CLK_IN, GLOBALRESET);
 		.write_in(IF_PCWrite)
 	);
 
-	// module Adder(sum_out, a_in, b_in);
 	adder U3(
 		// Outputs
 		.sum(IF_PCnext), 
@@ -230,7 +229,6 @@ module CPU(CLK_IN, GLOBALRESET);
 		.data_in({6'b0,IFID_Ins[25:0]})
 	);
 
-	// module Adder(sum_out, a_in, b_in);
 	adder U14(
 		// Outputs
 		.sum(ID_BranchPred_out),
