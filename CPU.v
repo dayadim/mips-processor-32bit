@@ -344,20 +344,20 @@ module CPU(CLK_IN, GLOBALRESET);
 	
 	
 	// module EXMEM_Reg(WB_out, M_out, ALUData_out, WriteData_out, Regd_out, WB_in, M_in, ALUData_in, WriteData_in, Regd_in, clk, reset_in);
-	EXMEM_Reg U23(
+	ExMemReg U23(
 		// Outputs
-		.WB_out(MEM_WriteBack),
-		.M_out(MEM_Memory), 
-		.ALUData_out(MEM_ALU), 
-		.WriteData_out(MEM_WriteData), 
-		.Regd_out(MEM_Regd),
+		.WBOut(MEM_WriteBack),
+		.MemOut(MEM_Memory), 
+		.ALUOut(MEM_ALU), 
+		.WriteOut(MEM_WriteData), 
+		.RegdOut(MEM_Regd),
 		// Inputs
-		.WB_in(EX_WriteBack), 
-		.M_in(EX_Mem), 
-		.ALUData_in(EX_ALU_out), 
-		.WriteData_in(EX_MUX_OP2_out), 
-		.Regd_in(EX_RegDst_MUX_out), 
-		.reset_in(GLOBALRESET),
+		.WBIn(EX_WriteBack), 
+		.MemIn(EX_Mem), 
+		.ALUIn(EX_ALU_out), 
+		.WriteIn(EX_MUX_OP2_out), 
+		.RegdIn(EX_RegDst_MUX_out), 
+		.reset(GLOBALRESET),
 		.clk(CLK_IN)
 	);
 		

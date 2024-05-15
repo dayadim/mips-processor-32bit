@@ -1,27 +1,24 @@
-module EXMEM_Reg(WB_out, M_out, ALUData_out, WriteData_out, Regd_out, WB_in, M_in, ALUData_in, WriteData_in, Regd_in, clk, reset_in);
+module ExMemReg(
+output [1:0] WBOut, MemOut,
+output [31:0] ALUOut, WriteOut,
+output [4:0] RegdOut,
+input [1:0] WBIn, MemIn,
+input [31:0] ALUIn, WriteIn,
+input [4:0] RegdIn,
+input clk, reset);
 
-  output [31:0] ALUData_out, WriteData_out;
-  output [4:0] Regd_out;
-  output [1:0] WB_out;
-  output [1:0] M_out;
-  input [31:0] ALUData_in, WriteData_in;
-  input [4:0] Regd_in;
-  input [1:0] WB_in; 
-  input [1:0] M_in;
-  input clk, reset_in;
-    
-  reg [72:0] state_internal;
+  reg [72:0] pipelined_data;
     
   always @(posedge clk) begin
-    if (reset_in == 1'b1)begin
-      state_internal <= 0;
+    if (reset == 1'b1)begin
+      pipelined_data <= 0;
     end
     else begin
-      state_internal <= {WB_in, M_in, ALUData_in, WriteData_in, Regd_in};
+      pipelined_data <= {WBIn, MemIn, ALUIn, WriteIn, RegdIn};
     end
       
-  end //always
+  end
 
-  assign {WB_out, M_out, ALUData_out, WriteData_out, Regd_out} = state_internal;
+  assign {WBOut, MemOut, ALUOut, WriteOut, RegdOut} = pipelined_data;
 
 endmodule
