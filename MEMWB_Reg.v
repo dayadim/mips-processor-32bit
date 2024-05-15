@@ -1,25 +1,32 @@
-module MEMWB_Reg(WB_out, Add_out, DataMem_out, Regd_out, WB_in, Add_in, DataMem_in, Regd_in, clk, reset_in);
+/*
+same as the last few registers
 
-  output [31:0] Add_out, DataMem_out;
-  output [4:0] Regd_out;
-  output [1:0] WB_out;
-  input [31:0] Add_in, DataMem_in;
-  input [4:0] Regd_in;
-  input [1:0] WB_in;
-  input clk, reset_in;
-    
-  reg [70:0] state_internal;
-    
-  always @(posedge clk) begin
-    if (reset_in == 1'b1)begin
-      state_internal <= 0;
-    end
-    else begin
-      state_internal <= {WB_in, DataMem_in, Add_in, Regd_in};
-    end
-      
-  end 
+*/
 
-  assign {WB_out, DataMem_out, Add_out, Regd_out} = state_internal;
+module MEM_WB_reg (
+    input clk,
+    input rst,
+    input [1:0] WB_in,
+    input [31:0] sum_in,
+    input [31:0] mem_data_in,
+    input [4:0] rd,
+	//outs
+    output [1:0] WB_out,
+    output [31:0] sum_out,
+    output [31:0] mem_data_out,
+    output [4:0] rd_out
+);
+
+reg [70:0] pipeline_data;
+	
+always @(posedge clk) begin
+	if (rst) pipeline_data <= 0;
+
+	else pipeline_data <= {WB_in, mem_data_in, sum_in, rd};
+
+end 
+
+//use assign again. don't bother messing with output reg
+assign {WB_out, mem_data_out, sum_out, rd_out} = pipeline_data;
 
 endmodule

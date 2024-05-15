@@ -379,19 +379,19 @@ forwarding_unit U21 (
 	
 
 	// module MEMWB_Reg(WB_out, Add_out, DataMem_out, Regd_out, WB_in, Add_in, DataMem_in, Regd_in, clk, reset_in);
-	MEMWB_Reg U25(
+	MEM_WB_reg U25(
 		// Outputs
 		.WB_out(WB_WriteBack), 
-		.Add_out(WB_ALU), 
-		.DataMem_out(WB_DataMemory), 
-		.Regd_out(WB_Regd), 
+		.sum_out(WB_ALU), 
+		.mem_data_out(WB_DataMemory), 
+		.rd_out(WB_Regd), 
 		// Inputs
 		.WB_in(MEM_WriteBack), 
-		.Add_in(MEM_ALU), 
-		.DataMem_in(MEM_DataMemory_out),
-		.Regd_in(MEM_Regd), 
+		.sum_in(MEM_ALU), 
+		.mem_data_in(MEM_DataMemory_out),
+		.rd(MEM_Regd), 
 		.clk(CLK_IN), 
-		.reset_in(GLOBALRESET)
+		.rst(GLOBALRESET)
 	);
 
 	
