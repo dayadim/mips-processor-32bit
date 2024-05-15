@@ -153,19 +153,20 @@ IF_ID_reg U5 (
 	);
 
 	// module RegisterFile(clk, data_in, Address_R1_in, Address_R2_in, Address_WriteReg_in, RegWrite_in, R1_out, R2_out);
-	RegisterFile U7(
-		// Outputs
-		.R1_out(ID_Reg_1_out),
-		.R2_out(ID_Reg_2_out),
-		.V0_out(v0_wire),
-		// Inputs
-		.clk(CLK_IN), 
-		.data_in(MEM_BranchMUX_out),
-		.Address_R1_in(IFID_Ins[25:21]),
-		.Address_R2_in(IFID_Ins[20:16]),
-		.Address_WriteReg_in(WB_Regd),
-		.RegWrite_in(WB_WriteBack[1])
-	); 
+Registers U7(
+    // Outputs
+    .read_data_1(ID_Reg_1_out),
+    .read_data_2(ID_Reg_2_out),
+    //.read_v0(v0_wire), // Commented out as v0_wire is not an output of the module
+    // Inputs
+    .clk(CLK_IN), 
+    .regwrite(WB_WriteBack[1]), // Assuming WB_WriteBack[1] is the regwrite signal
+    .write_data(MEM_BranchMUX_out),
+    .addr_1(IFID_Ins[25:21]),
+    .addr_2(IFID_Ins[20:16]),
+    .addr_write_reg(WB_Regd)
+);
+
 
 	// module Comparator(bool_out, data1_in, data2_in);
 	Comparator U8(
