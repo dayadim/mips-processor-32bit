@@ -240,32 +240,31 @@ HazardUnit U9(
 	
 
 	// module IDEX_Reg(WB_in,  M_in,  EX_in,  Reg1Data_in, Reg2Data_in,  Sext_in,  Regt_in, Regd_in, Regs_in, WB_out, M_out, EX_out, Reg1Data_out, Reg2Data_out, Sext_out, Regt_out, Regd_out, Regs_out, clk, reset_in);
-	IDEX_Reg U15(
-		// Outputs
-		.WB_out(EX_WriteBack),
-		.M_out(EX_Mem),
-		.EX_out(EX_Exec),
-		.Reg1Data_out(EX_Reg1_out),
-		.Reg2Data_out(EX_Reg2_out),
-		.Sext_out(EX_Select),
-		.Regt_out(EX_Regt),
-		.Regd_out(EX_Regd),
-		.Regs_out(EX_Regs),
-		// Inputs
-		.clk(CLK_IN),
-		.reset_in(GLOBALRESET),
-		.WB_in(ID_ExecMUX_out[7:6]),
-		.M_in(ID_ExecMUX_out[5:4]),
-		.EX_in(ID_ExecMUX_out[3:0]),
-		.Reg1Data_in(ID_Reg_1_out),
-		.Reg2Data_in(ID_Reg_2_out),
-		.Sext_in(ID_SE_out),
-		.Regt_in(IFID_Ins[20:16]),
-		.Regd_in(IFID_Ins[15:11]),
-		.Regs_in(IFID_Ins[25:21])
-	);
+ID_EX_reg U15(
+	// Outputs
+	.WB_out(EX_WriteBack),
+	.M_out(EX_Mem),
+	.EX_out(EX_Exec),
+	.data_r1_out(EX_Reg1_out),
+	.data_r2_out(EX_Reg2_out),
+	.signExt_out(EX_Select),
+	.rt_out(EX_Regt),
+	.rd_out(EX_Regd),
+	.rs_out(EX_Regs),
+	// Inputs
+	.clk(CLK_IN),
+	.rst(GLOBALRESET),
+	.WB_in(ID_ExecMUX_out[7:6]),
+	.M_in(ID_ExecMUX_out[5:4]),
+	.EX_in(ID_ExecMUX_out[3:0]),
+	.data_r1(ID_Reg_1_out),
+	.data_r2(ID_Reg_2_out),
+	.signExt_in(ID_SE_out),
+	.rt(IFID_Ins[20:16]),
+	.rd(IFID_Ins[15:11]),
+	.rs(IFID_Ins[25:21])
+);
 
-	
 	// module MUX3to1(data_out, data1_in, data2_in, data3_in, sel_in);
 	MUX3to1 U16(
 		// Outputs

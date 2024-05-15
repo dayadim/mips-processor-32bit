@@ -1,53 +1,42 @@
-module IDEX_Reg(
-    // Inputs
-    clk, 
-    reset_in,
-    WB_in,
-    M_in,
-    EX_in,
-    Reg1Data_in,
-    Reg2Data_in, 
-    Sext_in,
-    Regt_in,
-		Regd_in,
-    Regs_in,
-    // Outputs
-    WB_out,
-    M_out,
-    EX_out,
-    Reg1Data_out,
-    Reg2Data_out,
-		Sext_out,
-    Regt_out,
-    Regd_out,
-    Regs_out
+/*
+FIGURE 4.38 MEM and WB: The fourth and fifth pipe
+stages of a load instruction, highlighting the portions of
+the datapath in Figure 4.35 used in this pipe stage.
+*/
+
+//keep inputs and outputs together. nightmare to wire otherwise
+module ID_EX_reg(
+	input clk,
+	input rst,
+	input [1:0] WB_in,
+	input [1:0] M_in,
+	input [3:0] EX_in,
+	input [31:0] data_r1,
+	input [31:0] data_r2,
+	input [31:0] signExt_in,
+	input [4:0] rt,
+	input [4:0] rd,
+	input [4:0] rs,
+	output [1:0] WB_out,
+	output [1:0] M_out,
+	output [3:0] EX_out,
+	output [31:0] data_r1_out,
+	output [31:0] data_r2_out,
+	output [31:0] signExt_out,
+	output [4:0] rt_out,
+	output [4:0] rd_out,
+	output [4:0] rs_out
 );
 
-  output [31:0] Reg1Data_out, Reg2Data_out, Sext_out;
-  output [4:0] Regt_out, Regd_out, Regs_out;
-  output [1:0] WB_out;
-  output [1:0] M_out;
-  output [3:0] EX_out;
-  input [31:0] Reg1Data_in, Reg2Data_in, Sext_in;
-  input [4:0] Regt_in, Regd_in, Regs_in;
-  input [1:0] WB_in;
-  input [1:0] M_in;
-  input [3:0] EX_in;
-  input clk, reset_in;
+reg [118:0] pipeline_data;
+	
+always @(posedge clk) begin
+	if (rst) pipeline_data <= 119'b0;
 
-    
-  reg [118:0] state;
-    
-  always @(posedge clk) begin
-    if (reset_in == 1'b1)begin
-      state <= 119'b0;
-    end
-    else begin
-      state <= {WB_in,  M_in,  EX_in,  Reg1Data_in, Reg2Data_in,  Sext_in,  Regt_in, Regd_in, Regs_in};
-    end
-      
-  end //always
+	else pipeline_data <= {WB_in, M_in, EX_in, data_r1, data_r2, signExt_in, rt, rd, rs};
+	
+end
 
-  assign {WB_out, M_out, EX_out, Reg1Data_out, Reg2Data_out, Sext_out, Regt_out, Regd_out, Regs_out} = state;
+assign {WB_out, M_out, EX_out, data_r1_out, data_r2_out, signExt_out, rt_out, rd_out, rs_out} = pipeline_data;
 
 endmodule
