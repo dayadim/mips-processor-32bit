@@ -97,14 +97,14 @@ module CPU(CLK_IN, GLOBALRESET);
 	);
 
 	// module PCReg(address_out, address_in, clk, reset_in, write_in);
-	PCReg U2(
+	PC U2(
 		// Outputs
-		.address_out(IF_PC_out), 
+		.addr_out(IF_PC_out), 
 		// Inputs
-		.address_in(IF_Jmp_MUX_out), 
+		.addr_in(IF_Jmp_MUX_out), 
 		.clk(CLK_IN),
-		.reset_in(GLOBALRESET), 
-		.write_in(IF_PCWrite)
+		.rst(GLOBALRESET), 
+		.write_en(IF_PCWrite)
 	);
 
 	adder U3(

@@ -1,21 +1,30 @@
-module PCReg(address_out, address_in, clk, reset_in, write_in);
+/*
+section 4.3 - datapath
 
-  output [31:0] address_out;
-  input [31:0] address_in;
-  input clk, reset_in, write_in;
+FIGURE 4.6 A portion of the datapath used for fetching
+instructions and incrementing the program counter.
 
-  reg [31:0] state_internal;
+desc: provides mem addr of next instr with use of adder to instr mem
+	holds current address of instruction memory.
+	updates on pos edge clk
+	sync reset
 
-  always@(posedge clk) begin
-    if(reset_in == 1'b1) begin
-      state_internal <= 32'b0;
-    end
-    else begin
-      if(write_in == 1'b1)
-        state_internal <= address_in;
-    end
-  end
+notes:
+	addr out is output reg. can be used within always block
 
-  assign address_out = state_internal;
+*/
+
+module PC (clk, rst, write_en, addr_in, addr_out);
+
+input clk, rst, write_en;
+input [31:0] addr_in;
+
+output reg [31:0] addr_out;
+
+always @ (posedge clk) begin
+	if (rst) addr_out <= 32'b0;
+	else
+		if (write_en) addr_out <= addr_in;
+end
 
 endmodule
