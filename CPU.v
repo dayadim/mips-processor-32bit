@@ -77,23 +77,23 @@ module CPU(CLK_IN, GLOBALRESET);
 
 
 	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
-	MUX2to1 U0(
+	mux_2to1_32bit U0(
 		// Outputs
-		.data_out(IF_Branch_MUX_out),
+		.out(IF_Branch_MUX_out),
 		// Inputs
-		.data1_in(IF_PCnext), 
-		.data2_in(ID_BranchPred_out), 
-		.sel_in(ID_Branch)
+		.in1(IF_PCnext), 
+		.in2(ID_BranchPred_out), 
+		.sel(ID_Branch)
 	); 
 
 	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
-	MUX2to1 U1(
+	mux_2to1_32bit U1(
 		// Outputs
-		.data_out(IF_Jmp_MUX_out),
+		.out(IF_Jmp_MUX_out),
 		// Inputs
-		.data1_in(IF_Branch_MUX_out),
-		.data2_in({IF_PCnext[31:28], ID_Jump_2_out[27:0]}),
-		.sel_in(ID_Jmp)
+		.in1(IF_Branch_MUX_out),
+		.in2({IF_PCnext[31:28], ID_Jump_2_out[27:0]}),
+		.sel(ID_Jmp)
 	);
 
 	// module PCReg(address_out, address_in, clk, reset_in, write_in);
@@ -198,13 +198,13 @@ HazardUnit U9(
 
 
 	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
-	MUX2to1 #(8) U10(
+	mux_2to1_8bit U10(
 		// Outputs
-		.data_out(ID_ExecMUX_out),
+		.out(ID_ExecMUX_out),
 		// Inputs
-		.data1_in({ID_WriteBack,ID_Mem, ID_Exec}),
-		.data2_in(8'b0),
-		.sel_in(NOP)
+		.in1({ID_WriteBack,ID_Mem, ID_Exec}),
+		.in2(8'b0),
+		.sel(NOP)
 	);
 	
 	// module SignExtend(data_out, data_in);
@@ -289,13 +289,13 @@ ID_EX_reg U15(
 	);
 	
 	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
-	MUX2to1 U18(
+	mux_2to1_32bit U18(
 		// Outputs
-		.data_out(EX_ALUSourceMUX_out),
+		.out(EX_ALUSourceMUX_out),
 		// Inputs
-		.data1_in(EX_MUX_OP2_out),
-		.data2_in(EX_Select),
-		.sel_in(EX_Exec[0])
+		.in1(EX_MUX_OP2_out),
+		.in2(EX_Select),
+		.sel(EX_Exec[0])
 	);
 
 	// module ALUControl(ALUOp_in, Funct_in, Data_out);
@@ -335,13 +335,13 @@ forwarding_unit U21 (
 
 
 	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
-	MUX2to1 #(5) U22(
+	mux_2to1_5bit U22(
 		// Outputs
-		.data_out(EX_RegDst_MUX_out),
+		.out(EX_RegDst_MUX_out),
 		// Inputs
-		.data1_in(EX_Regt),
-		.data2_in(EX_Regd),
-		.sel_in(EX_Exec[3])
+		.in1(EX_Regt),
+		.in2(EX_Regd),
+		.sel(EX_Exec[3])
 	);
 	
 	
@@ -396,57 +396,13 @@ forwarding_unit U21 (
 
 	
 	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
-	MUX2to1 U26(
-		.data_out(MEM_BranchMUX_out),
-		.data1_in(WB_ALU),
-		.data2_in(WB_DataMemory),
-		.sel_in(WB_WriteBack[0])
+	mux_2to1_32bit U26(
+		.out(MEM_BranchMUX_out),
+		.in1(WB_ALU),
+		.in2(WB_DataMemory),
+		.sel(WB_WriteBack[0])
 	);
 
-	/*
-	// module Display32BitValue(input [31:0] value,output reg [6:0] seg[0:3],output reg [3:0] digit_select);
-	Display32BitValue U27 (
-		// Outputs
-		.digit_out(digit),
-		.seg_out(seg),
-		// Inputs
-		.value_in(v0_wire),
-		.clk(CLK_IN)
-	);
-	*/
-	/*
-	assign HEX0[0] = seg[0][6];
-	assign HEX0[1] = seg[0][5];
-	assign HEX0[2] = seg[0][4];
-	assign HEX0[3] = seg[0][3];
-	assign HEX0[4] = seg[0][2];
-	assign HEX0[5] = seg[0][1];
-	assign HEX0[6] = seg[0][0];
-
-	assign HEX1[0] = seg[1][6];
-	assign HEX1[1] = seg[1][5];
-	assign HEX1[2] = seg[1][4];
-	assign HEX1[3] = seg[1][3];
-	assign HEX1[4] = seg[1][2];
-	assign HEX1[5] = seg[1][1];
-	assign HEX1[6] = seg[1][0];
-
-	assign HEX2[0] = seg[2][6];
-	assign HEX2[1] = seg[2][5];
-	assign HEX2[2] = seg[2][4];
-	assign HEX2[3] = seg[2][3];
-	assign HEX2[4] = seg[2][2];
-	assign HEX2[5] = seg[2][1];
-	assign HEX2[6] = seg[2][0];
-
-	assign HEX3[0] = seg[3][6];
-	assign HEX3[1] = seg[3][5];
-	assign HEX3[2] = seg[3][4];
-	assign HEX3[3] = seg[3][3];
-	assign HEX3[4] = seg[3][2];
-	assign HEX3[5] = seg[3][1];
-	assign HEX3[6] = seg[3][0];
-	*/
 
 
 endmodule

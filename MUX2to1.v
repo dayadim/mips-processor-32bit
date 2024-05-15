@@ -1,13 +1,16 @@
-module MUX2to1(data_out, data1_in, data2_in, sel_in);
+/*
+general purpose mux 32 bit
+*/
 
-  parameter N = 32;
+module mux_2to1_32bit (in1, in2, sel, out);
 
-  output reg [N-1:0] data_out;
-  input [N-1:0] data1_in, data2_in;
-  input sel_in;
+input [31:0] in1, in2;
+input sel;
 
-  always@(*) begin
-    data_out <= sel_in ? data2_in : data1_in;
-  end
+output reg [31:0] out;
+
+always @ (*) begin
+	out <= sel ? in2 : in1;
+end
 
 endmodule
