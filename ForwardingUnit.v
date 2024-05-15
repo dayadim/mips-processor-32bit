@@ -1,55 +1,76 @@
-module ForwardingUnit(IDEXRegs_in, IDEXRegt_in, EXMEMRegWrite_in, EXMEMRegd_in, MEMWBRegd_in, MEMWBRegWrite_in, ForwardA_out, ForwardB_out);
+module forwarding_unit(
+	input [4:0] EX_MEM_rd, MEM_WB_rd, ID_EX_rs, ID_EX_rt,
+	input EX_MEM_write, MEM_WB_write,
+	output reg [1:0] fwd_A, fwd_B
+);
 
-  input [4:0] EXMEMRegd_in, MEMWBRegd_in, IDEXRegs_in, IDEXRegt_in;
-  input EXMEMRegWrite_in;    
-  input MEMWBRegWrite_in;    
-  output reg [1:0] ForwardA_out;  
-  output reg [1:0] ForwardB_out;  
+// fwd_A
+always @(*) begin
+		//ex hazard
+		if(EX_MEM_write && (EX_MEM_rd != 0) && (EX_MEM_rd == ID_EX_rs))
+			fwd_A <= 2'b10;
+		//mem hazard
+		else if(MEM_WB_write && (MEM_WB_rd != 0) && ~(EX_MEM_write && (EX_MEM_rd != 0)) && (EX_MEM_rd != ID_EX_rs) && (MEM_WB_rd == ID_EX_rs))
+			fwd_A <= 2'b01;
+		else
+			fwd_A <= 2'b00;
+	end
+	
+// fwd_B
+always @(*) begin
+		//ex hazard
+		if(EX_MEM_write && (EX_MEM_rd != 0) && (EX_MEM_rd == ID_EX_rt))
+			fwd_B <= 2'b10;
+		//mem hazard
+		else if(MEM_WB_write && (MEM_WB_rd != 0) && ~(EX_MEM_write && (EX_MEM_rd != 0)) && (EX_MEM_rd != ID_EX_rt) && (MEM_WB_rd == ID_EX_rt))
+			fwd_B <= 2'b01;
+		else
+			fwd_B <= 2'b00;
+	end
 
-  always @(*) begin
-    case({EXMEMRegWrite_in,MEMWBRegWrite_in})
-      2'b00: begin // No Hazard
-        ForwardA_out <= 2'b00;
-        ForwardB_out <= 2'b00;
-      end
-      2'b01: begin // MEMWB Hazard
-        if(MEMWBRegd_in != 0 && MEMWBRegd_in == IDEXRegs_in)
-          ForwardA_out <= 2'b01;
-        else
-          ForwardA_out <= 0;
-        if(MEMWBRegd_in != 0 && MEMWBRegd_in == IDEXRegt_in)
-          ForwardB_out <= 2'b01;
-        else
-          ForwardB_out <= 0;
-      end
-      2'b10: begin // EXMEM Hazard
-        if(EXMEMRegd_in != 0 && EXMEMRegd_in == IDEXRegs_in)
-          ForwardA_out <= 2'b10;
-        else
-          ForwardA_out <= 0;
-        if(EXMEMRegd_in != 0 && EXMEMRegd_in == IDEXRegt_in)
-          ForwardB_out <= 2'b10;
-        else
-          ForwardB_out <= 0;
-      end
-      2'b11: begin // Double Data Hazard
-        if(EXMEMRegd_in != 0 && EXMEMRegd_in == IDEXRegs_in) 
-          ForwardA_out <= 2'b10;
-        else if(MEMWBRegd_in != 0 && MEMWBRegd_in == IDEXRegs_in )
-          ForwardA_out <= 2'b01;
-        else
-          ForwardA_out <= 0;
-        if(EXMEMRegd_in != 0 && EXMEMRegd_in == IDEXRegt_in) 
-          ForwardB_out <= 2'b10;
-        else if(MEMWBRegd_in != 0 && MEMWBRegd_in == IDEXRegt_in)
-          ForwardB_out <= 2'b01;
-        else
-          ForwardB_out <= 0;
-      end
-      default: begin
-        ForwardA_out <= 1'b0;
-        ForwardB_out <= 1'b0;
-      end // end default
-    endcase // endcase statement
-  end // end always    
 endmodule
+
+////------old code
+/*
+module fwd_unit (
+	input		EX_MEM_write,  // if EX/MEM stage writes back to regfile
+	input 		MEM_WB_write,  // if MEM/WB stage writes back to regfile
+	input [4:0] ID_EX_rs,  // src reg in ID/EX stage
+	input [4:0] ID_EX_rt,  // targ reg in ID/EX stage
+	input [4:0] EX_MEM_rd,  // dest reg in EX/MEM stage
+	input [4:0] MEM_WB_rd,  // dest reg in MEM/WB stage
+	output reg [1:0] fwd_A,
+	output reg [1:0] fwd_B
+	);
+
+
+// fwd_A
+always @(*)
+	begin
+		//ex hazard
+		if(EX_MEM_write && (EX_MEM_rd != 0) && (EX_MEM_rd == ID_EX_rs))
+			fwd_A <= 2'b10;
+		//mem hazard
+		else if(MEM_WB_write && (MEM_WB_rd != 0) && ~(EX_MEM_write && (EX_MEM_rd != 0)) && (EX_MEM_rd != ID_EX_rs) && (MEM_WB_rd == ID_EX_rs))
+			fwd_A <= 2'b01;
+		else
+			fwd_A <= 2'b00;
+	end
+	
+// fwd_B
+always @(*)
+	begin
+		//ex hazard
+		if(EX_MEM_write && (EX_MEM_rd != 0) && (EX_MEM_rd == ID_EX_rt))
+			fwd_B <= 2'b10;
+		//mem hazard
+		else if(MEM_WB_write && (MEM_WB_rd != 0) && ~(EX_MEM_write && (EX_MEM_rd != 0)) && (EX_MEM_rd != ID_EX_rt) && (MEM_WB_rd == ID_EX_rt))
+			fwd_B <= 2'b01;
+		else
+			fwd_B <= 2'b00;
+	end
+
+endmodule
+
+
+*/

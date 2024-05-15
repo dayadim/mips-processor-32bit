@@ -319,18 +319,19 @@ module CPU(CLK_IN, GLOBALRESET);
 	);
 
 	// module ForwardingUnit(IDEXRegs_in, IDEXRegt_in, EXMEMRegWrite_in, EXMEMRegd_in, MEMWBRegd_in, MEMWBRegWrite_in, ForwardA_out, ForwardB_out);
-	ForwardingUnit U21 (
-		// Outputs
-		.ForwardA_out(EX_ForwardingA),
-		.ForwardB_out(EX_ForwardingB),
-		// Inputs
-		.IDEXRegs_in(EX_Regs),
-		.IDEXRegt_in(EX_Regt),
-		.EXMEMRegWrite_in(MEM_WriteBack[1]),
-		.EXMEMRegd_in(MEM_Regd),
-		.MEMWBRegd_in(WB_Regd),
-		.MEMWBRegWrite_in(WB_WriteBack[1])
-	);
+forwarding_unit U21 (
+	// Outputs
+	.fwd_A(EX_ForwardingA),
+	.fwd_B(EX_ForwardingB),
+	// Inputs
+	.ID_EX_rs(EX_Regs),
+	.ID_EX_rt(EX_Regt),
+	.EX_MEM_write(MEM_WriteBack[1]),
+	.EX_MEM_rd(MEM_Regd),
+	.MEM_WB_rd(WB_Regd),
+	.MEM_WB_write(WB_WriteBack[1])
+);
+
 
 	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
 	MUX2to1 #(5) U22(
