@@ -145,8 +145,8 @@ module CPU(CLK_IN, GLOBALRESET);
 		.WB(ID_WriteBack),
 		.MEM(ID_Mem),
 		.EX(ID_Exec),
-		.Jmp_out(ID_Jmp),
-		.Branch_out(ID_Branch),
+		.jump(ID_Jmp),
+		.branch(ID_Branch),
 		// Inputs
 		.instruction(IFID_Ins[31:26])
 	);
