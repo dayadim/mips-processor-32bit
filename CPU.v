@@ -298,12 +298,12 @@ module CPU(CLK_IN, GLOBALRESET);
 	);
 
 	// module ALUControl(ALUOp_in, Funct_in, Data_out);
-	ALUControl U19(
+	ALU_controller U19(
 		// Outputs
-		.Data_out(EX_ALUcon),
+		.ALUOp_out(EX_ALUcon),
 		// Inputs
 		.ALUOp_in(EX_Exec[2:1]),
-		.Funct_in(EX_Select[5:0])
+		.funct_code(EX_Select[5:0])
 	);
 
 	// module ALU(data_out, ZEROFLAG_out, data1_in, data2_in, ALUOp_in);
