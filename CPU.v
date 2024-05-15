@@ -142,13 +142,13 @@ module CPU(CLK_IN, GLOBALRESET);
 	// module Control(WB_out, M_out, EX_out, Jmp_out, Branch_out, Ins_in);
 	Control U6(
 		// Outputs
-		.WB_out(ID_WriteBack),
-		.M_out(ID_Mem),
-		.EX_out(ID_Exec),
+		.WB(ID_WriteBack),
+		.MEM(ID_Mem),
+		.EX(ID_Exec),
 		.Jmp_out(ID_Jmp),
 		.Branch_out(ID_Branch),
 		// Inputs
-		.Ins_in(IFID_Ins[31:26])
+		.instruction(IFID_Ins[31:26])
 	);
 
 	// module RegisterFile(clk, data_in, Address_R1_in, Address_R2_in, Address_WriteReg_in, RegWrite_in, R1_out, R2_out);
