@@ -1,59 +1,30 @@
-//For simulation use only//
-//Not synthesizeable//
+/*
+use readmemh and writememh. similar to ostream
+
+*/
 
 `timescale 1ns/1ps
 
-//
-//  SIMULATION MODULE
-//
-//
-module DataMemory #(parameter FILE = "") (data_out, data_in, address_in, write_in, clk);
+module data_mem #(parameter DATAFILE = "") (clk, wr_en, data_in, addr_in, data_out);
 
-  output [31:0] data_out;
-  input [31:0] data_in, address_in;
-  input write_in, clk;
+input clk, wr_en;
+input [31:0] data_in, addr_in;
+output [31:0] data_out;		//keep this as output
 
-  reg [31:0] Memory_internal [0:255];
+reg [31:0] internal_dataMem [0:255];
 
-  initial
-    // Not synthesizable
-    $readmemh(FILE, Memory_internal);
+initial begin
+	$readmemh(DATAFILE, internal_dataMem);
+end
 
-  always@(posedge clk) begin
-    if(write_in == 1'b1)  begin
-        Memory_internal[address_in] <= data_in;
-    end
-    $writememh(FILE, Memory_internal);
-  end
+always@(posedge clk) begin
+	if(wr_en) internal_dataMem[addr_in] <= data_in;
 
+	$writememh(DATAFILE, internal_dataMem);
+end
 
-  assign data_out = Memory_internal[address_in];
-
+//always @ (*) begin
+	assign data_out = internal_dataMem[addr_in];
+//end
 
 endmodule
-
-
-//
-//
-//  FPGA Module
-//
-//
-/*
-module DataMemory #(parameter MEM_SIZE = 256) (data_out, data_in, address_in, write_in, clk);
-
-  output [31:0] data_out;
-  input [31:0] data_in, address_in;
-  input write_in, clk;
-
-  reg [31:0] Memory_internal [0:MEM_SIZE-1];
-
-  always @(posedge clk) begin
-    if (write_in) begin
-      Memory_internal[address_in] <= data_in;
-    end
-  end
-
-  assign data_out = Memory_internal[address_in];
-
-endmodule
-*/

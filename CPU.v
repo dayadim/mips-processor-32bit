@@ -365,13 +365,13 @@ module CPU(CLK_IN, GLOBALRESET);
 	
 
 	// module DataMemory #(FILE = "") (data_out, data_in, address_in, write_in, clk);
-	DataMemory #(DATAMEMFILE) U24(
+	data_mem #(DATAMEMFILE) U24(
 		// Outputs
 		.data_out(MEM_DataMemory_out),
 		// Inputs
 		.data_in(MEM_WriteData),
-		.address_in(MEM_ALU),
-		.write_in(MEM_Memory[0]),
+		.addr_in(MEM_ALU),
+		.wr_en(MEM_Memory[0]),
 		.clk(CLK_IN)
 	);
 	
