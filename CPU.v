@@ -1,27 +1,6 @@
 `timescale 1ns/1ps
-`include "Adder.v"
-`include "ALU.v"
-`include "ALUControl.v"
-`include "Comparator.v"
-`include "Control.v"
-`include "DataMemory.v"
-`include "EXMEM_Reg.v"
-`include "ForwardingUnit.v"
-`include "HazardUnit.v"
-`include "IDEX_Reg.v"
-`include "IFID_Reg.v"
-`include "InstructionMem.v"
-`include "MEMWB_Reg.v"
-`include "MUX2to1.v"
-`include "MUX3to1.v"
-`include "PCReg.v"
-`include "RegisterFile.v"
-`include "Shifter.v"
-`include "SignExtend.v"
-//`include "Display32BitValue.v"
 
 module CPU(CLK_IN, GLOBALRESET);
-	localparam v0 = 2;
 	localparam INSMEMFILE = "Program.txt";
 	localparam DATAMEMFILE = "Memory.txt";
 
@@ -67,14 +46,6 @@ module CPU(CLK_IN, GLOBALRESET);
 	wire [1:0] WB_WriteBack;
 	wire [4:0] WB_Regd;
 	/****************************/
-
-	/**********FPGA VARS***********/
-	wire [31:0] v0_wire;
-	wire [6:0] seg;
-	wire [3:0] digit;	
-	/****************************/
-
-
 
 	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
 	mux_2to1_32bit U0(
