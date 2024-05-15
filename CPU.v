@@ -125,18 +125,19 @@ module CPU(CLK_IN, GLOBALRESET);
 
 
 	// module IFID_Reg(Ins_out, PC_in, PC_out, Ins_in, write_in, clk, reset_in, flush_in);
-	IFID_Reg U5 (
-		// Outputs
-		.Ins_out(IFID_Ins),
-		.PC_out(IFID_PC_out),
-		// Inputs
-		.PC_in(IF_PCnext),
-		.Ins_in(IF_Ins),
-		.write_in(IFID_WriteSignal),
-		.clk(CLK_IN),
-		.reset_in(GLOBALRESET),
-		.flush_in(FLUSH)
-	);
+IF_ID_reg U5 (
+	// Outputs
+	.instr_out(IFID_Ins),
+	.addr_out(IFID_PC_out),
+	// Inputs
+	.addr_in(IF_PCnext),
+	.instr_in(IF_Ins),
+	.wr_en(IFID_WriteSignal),
+	.clk(CLK_IN),
+	.rst(GLOBALRESET),
+	.flush(FLUSH)
+);
+
 															
 	
 	// module Control(WB_out, M_out, EX_out, Jmp_out, Branch_out, Ins_in);
