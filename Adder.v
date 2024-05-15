@@ -1,11 +1,7 @@
-`timescale 1ns/1ps
+module adder(sum, in1, in2);
+    output [31:0] sum;
+    input [31:0] in1, in2;
 
-module Adder(sum_out, a_in, b_in);
-
-    output [31:0] sum_out;
-    input [31:0] a_in, b_in;
-
-    assign sum_out = a_in + b_in;
-
+    assign sum = in1 + in2;
 
 endmodule

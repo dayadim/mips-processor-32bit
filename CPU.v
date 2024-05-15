@@ -108,12 +108,12 @@ module CPU(CLK_IN, GLOBALRESET);
 	);
 
 	// module Adder(sum_out, a_in, b_in);
-	Adder U3(
+	adder U3(
 		// Outputs
-		.sum_out(IF_PCnext), 
+		.sum(IF_PCnext), 
 		// Inputs
-		.a_in(IF_PC_out), 
-		.b_in(32'h4)
+		.in1(IF_PC_out), 
+		.in2(32'h4)
 	);
 
 	// module InstructionMemory #(FILE = "") (data_out, address_in);
@@ -231,12 +231,12 @@ module CPU(CLK_IN, GLOBALRESET);
 	);
 
 	// module Adder(sum_out, a_in, b_in);
-	Adder U14(
+	adder U14(
 		// Outputs
-		.sum_out(ID_BranchPred_out),
+		.sum(ID_BranchPred_out),
 		// Inputs
-		.a_in(IFID_PC_out),
-		.b_in(ID_BS_2_out)
+		.in1(IFID_PC_out),
+		.in2(ID_BS_2_out)
 	);
 	
 

@@ -5,6 +5,7 @@
 *.o
 *.pdf
 *.out
+*.vstf
 *.pptx
 *.
 .DS_Store
