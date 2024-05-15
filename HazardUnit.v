@@ -1,73 +1,70 @@
-module HazardUnit(IDEXMemRead_in, EXMEMMemRead_in, EXMEMMemToReg_in, IDEXRegt_in, EXMEMRegt_in, IFIDRegs_in, IFIDRegt_in, branch_in, ComparatorResult_in, jmp_in, IFIDWrite_out, PCWrite_out, NOP_out, FLUSH_out);
+/*
+hazard unit needs big overhaul
 
-  input IDEXMemRead_in, EXMEMMemRead_in, EXMEMMemToReg_in, branch_in, ComparatorResult_in, jmp_in;
-  input [4:0] IDEXRegt_in, EXMEMRegt_in, IFIDRegs_in, IFIDRegt_in;
-  output reg IFIDWrite_out, PCWrite_out, NOP_out, FLUSH_out;
+https://www.youtube.com/watch?v=79sveBM0OsU&list=PL5AmAh9QoSK4fNTAQf2g-1s6FvQ8edoWd&index=9
 
+or just read section 4.8 on data hazards and 4.8 control hazards
 
-  always@(*)begin 
-  //loading hazard detection
-    if(IDEXMemRead_in == 1'b1) begin
-      if(IDEXRegt_in == IFIDRegs_in) begin
-        NOP_out = 1'b1;
-        PCWrite_out = 1'b0;
-        IFIDWrite_out = 1'b0;
-      end
-      else if(IDEXRegt_in == IFIDRegt_in) begin
-        NOP_out = 1'b1;
-        PCWrite_out = 1'b0;
-        IFIDWrite_out = 1'b0;
-      end
-    end
+*/
 
-    else if(EXMEMMemToReg_in == 1'b1) begin
-      if(EXMEMRegt_in == IFIDRegs_in) begin
-        NOP_out = 1'b1;
-        PCWrite_out = 1'b0;
-        IFIDWrite_out = 1'b0;
-      end
-      else if(EXMEMRegt_in == IFIDRegt_in) begin
-        NOP_out = 1'b1;
-        PCWrite_out = 1'b0;
-        IFIDWrite_out = 1'b0;
-      end
-    end
+module HazardUnit (
+	input ID_EX_MemRead,
+	input EX_MEM_MemRead,
+	input EX_MEM_memToReg,
+	input [4:0] ID_EX_rt,
+	input [4:0] EX_MEM_rt,
+	input [4:0] IF_ID_rs,
+	input [4:0] IF_ID_rt,
+	input br,
+	input comparison_in,
+	input jump,
+	output reg IF_ID_wr_en,
+	output reg PC_wr_en,
+	output reg nop_flag,
+	output reg flush_flag
+);
 
-  //branch_in hazards
-    else if(branch_in == 1'b1) begin
-      if(IDEXMemRead_in == 1'b1) begin
-        if(IDEXRegt_in == IFIDRegs_in || IDEXRegt_in == IFIDRegt_in) begin
-          NOP_out = 1'b1;
-          PCWrite_out = 1'b0;
-          IFIDWrite_out = 1'b0;
-        end
-      end
-      else if(EXMEMMemRead_in == 1'b1)begin //if loading to register used in branch_in 2nd instr before branch_in
-        if(EXMEMRegt_in == IFIDRegs_in || EXMEMRegt_in == IFIDRegt_in)begin 
-          NOP_out = 1'b1;
-          PCWrite_out = 1'b0;
-          IFIDWrite_out = 1'b0;
-        end
-      end
-      else if(ComparatorResult_in == 1'b1)begin //if actually branching
-        NOP_out = 1'b0;
-        PCWrite_out = 1'b1;
-        IFIDWrite_out = 1'b1;
-        FLUSH_out = 1'b1;
-      end//ComparatorResult_in
-    end //branch_in
-    else if(jmp_in == 1'b1) begin
-      NOP_out = 1'b0;
-      PCWrite_out = 1'b1;
-      IFIDWrite_out = 1'b1;
-      FLUSH_out = 1'b1;
-    end
-    else begin
-      NOP_out = 1'b0;
-      PCWrite_out = 1'b1;
-      IFIDWrite_out = 1'b1;
-      FLUSH_out = 1'b0;
-    end //else
-  end //always
+//reg [3:0] internal_data	//removed. used indiv output regs instead instead
+
+always @(*) begin
+	//standard load hzards
+	if ((ID_EX_MemRead && ((ID_EX_rt == IF_ID_rs) || ID_EX_rt == IF_ID_rt)) ||
+		(EX_MEM_memToReg && ((EX_MEM_rt == IF_ID_rs) || (EX_MEM_rt == IF_ID_rt)))) begin
+		IF_ID_wr_en = 1'b0;
+		PC_wr_en = 1'b0;
+		nop_flag = 1'b1;
+	end
+
+	//branching hazards
+	else if(br == 1'b1) begin
+		 //second condition in if statement: if load to reg after use in br second instr, before br
+		if ((ID_EX_MemRead && ((ID_EX_rt == IF_ID_rs) || (ID_EX_rt == IF_ID_rt))) ||
+		(EX_MEM_MemRead && ((EX_MEM_rt == IF_ID_rs) || (EX_MEM_rt == IF_ID_rt)))) begin
+			PC_wr_en = 1'b0;
+			IF_ID_wr_en = 1'b0;
+			nop_flag = 1'b1;
+		end else if (comparison_in) begin
+			//if branching
+			PC_wr_en = 1'b1;
+			IF_ID_wr_en = 1'b1;
+			nop_flag = 1'b0;
+			flush_flag = 1'b1;
+		end
+	end
+
+	else if (jump) begin
+		PC_wr_en = 1'b1;
+		IF_ID_wr_en = 1'b1;
+		nop_flag = 1'b0;
+		flush_flag = 1'b1;
+	end
+	
+	else begin
+		PC_wr_en = 1'b1;
+		IF_ID_wr_en = 1'b1;
+		nop_flag = 1'b0;
+		flush_flag = 1'b0;
+	end
+end
 
 endmodule

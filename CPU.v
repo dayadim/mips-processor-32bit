@@ -176,24 +176,25 @@ module CPU(CLK_IN, GLOBALRESET);
 	);
 
 	// module HazardUnit(IDEXMemRead_in, EXMEMMemRead_in, EXMEMMemToReg_in, IDEXRegt_in, EXMEMRegt_in, IFIDRegs_in, IFIDRegt_in, branch_in, ComparatorResult_in, jmp_in, IFIDWrite_out, PCWrite_out, NOP_out, FLUSH_out);
-	HazardUnit U9(
-		// Outputs
-		.IFIDWrite_out(IFID_WriteSignal),
-		.PCWrite_out(IF_PCWrite),
-		.NOP_out(NOP),
-		.FLUSH_out(FLUSH),
-		// Inputs
-		.IDEXMemRead_in(EX_Mem[1]),
-		.EXMEMMemRead_in(MEM_Memory[1]),
-		.EXMEMMemToReg_in(MEM_WriteBack[0]),
-		.IDEXRegt_in(EX_Regt),
-		.EXMEMRegt_in(MEM_Regd),
-		.IFIDRegs_in(IFID_Ins[25:21]),
-		.IFIDRegt_in(IFID_Ins[20:16]),
-		.branch_in(ID_Branch),
-		.ComparatorResult_in(ID_Comparator_out),
-		.jmp_in(ID_Jmp)
-	);
+HazardUnit U9(
+	// Outputs
+	.IF_ID_wr_en(IFID_WriteSignal),
+	.PC_wr_en(IF_PCWrite),
+	.nop_flag(NOP),
+	.flush_flag(FLUSH),
+	// Inputs
+	.ID_EX_MemRead(EX_Mem[1]),
+	.EX_MEM_MemRead(MEM_Memory[1]),
+	.EX_MEM_memToReg(MEM_WriteBack[0]),
+	.ID_EX_rt(EX_Regt),
+	.EX_MEM_rt(MEM_Regd),
+	.IF_ID_rs(IFID_Ins[25:21]),
+	.IF_ID_rt(IFID_Ins[20:16]),
+	.br(ID_Branch),
+	.comparison_in(ID_Comparator_out),
+	.jump(ID_Jmp)
+);
+
 
 	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
 	MUX2to1 #(8) U10(
