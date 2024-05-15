@@ -308,13 +308,14 @@ module CPU(CLK_IN, GLOBALRESET);
 
 	// module ALU(data_out, ZEROFLAG_out, data1_in, data2_in, ALUOp_in);
 	ALU U20(
-		// Outputs
-		.data_out(EX_ALU_out),
-		.ZEROFLAG_out(EX_ZEROFLAG),
 		// Inputs
-		.data1_in(EX_MUX_OP1_out),
-		.data2_in(EX_ALUSourceMUX_out),
-		.ALUOp_in(EX_ALUcon)
+		.in1(EX_MUX_OP1_out),
+		.in2(EX_ALUSourceMUX_out),
+		.ALUOp_in(EX_ALUcon),
+		// Outputs
+		.result(EX_ALU_out),
+		.zeroFlag(EX_ZEROFLAG)
+
 	);
 
 	// module ForwardingUnit(IDEXRegs_in, IDEXRegt_in, EXMEMRegWrite_in, EXMEMRegd_in, MEMWBRegd_in, MEMWBRegWrite_in, ForwardA_out, ForwardB_out);

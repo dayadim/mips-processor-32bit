@@ -1,44 +1,61 @@
-module ALU(data_out, ZEROFLAG_out, data1_in, data2_in, ALUOp_in);
+/*
+see FIGURE B.5.15 A Verilog behavioral definition of a MIPS ALU
+*/
 
-  output reg [31:0] data_out;
-  output reg ZEROFLAG_out;
-  input [31:0] data1_in, data2_in;
-  input [3:0] ALUOp_in;
+module ALU(result, zeroFlag, in1, in2, ALUOp_in);
+	
+								//coming from:
+	input [31:0] in1;			//- reg file?
+	input [31:0] in2; 			//-	^
+	input [3:0] ALUOp_in;				//- alu control module	//fixed sizing error
 
-  // Internal registers for use with the MFHI and MFLO instructions
-  reg [31:0] HI_internal, LO_internal;
+							//goes to:	
+	output reg [31:0] result;	//- addr of data mem
+							//	- a 2 to 1 mux after data mem
+	output reg zeroFlag;		//- an and gate
 
-  always@(*) begin
-    case(ALUOp_in)
-      0: data_out <= data1_in & data2_in;
-      1: data_out <= data1_in | data2_in;
-      2: data_out <= data1_in + data2_in;
-      3: data_out <= HI_internal;
-      4: data_out <= LO_internal;
-      5: begin
-        {HI_internal, LO_internal} = data1_in * data2_in;
-        data_out <= LO_internal;
-      end
-      6: data_out <= data1_in - data2_in;
-      7: begin 
-          if(data1_in < data2_in)
-            data_out <= 32'b1;
-        end
-      8: begin
-        LO_internal = data1_in / data2_in;
-        HI_internal = data1_in % data2_in;
-        data_out <= LO_internal;
-      end
-      12: data_out <= ~(data1_in | data2_in);
-      default: data_out <= 32'b0;
-    endcase
+	reg [31:0] hi, lo;
 
-    if(data_out == 0)
-      ZEROFLAG_out <= 1'b1;
-    else
-      ZEROFLAG_out <= 1'b0;
+	always @ (*) begin
+		case(ALUOp_in)
+			//abd
+			0: result <= in1 & in2;
+			//or
+			1: result <= in1 | in2;
+			//add
+			2: result <= in1 + in2;
+			//mfhi
+			3: result <= hi;
+			//mflo
+			4: result <= lo;
+			//mult
+			5: begin
+				{hi, lo} = in1 * in2;
+				result <= lo;
+			end
+			//sub
+			6: result <= in1 - in2;
+			//slt
+			7: if(in1 < in2) result <= 1;
+			//div
+			8: begin
+				if (in2 != 0) begin
+					lo = in1 / in2;
+					hi = in1 % in2;
+					result <= lo;
+				end
+			end
+			//nor
+			12: result <= ~(in1 | in2);
+			
+			//
+			default: result <= 0;
 
-  end
+		endcase
+
+	zeroFlag <= (result == 0);		//hi when 0, lo when 1
+
+	end
 
 
 endmodule
