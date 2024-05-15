@@ -116,11 +116,11 @@ module CPU(CLK_IN, GLOBALRESET);
 	);
 
 	// module InstructionMemory #(FILE = "") (data_out, address_in);
-	InstructionMemory #(INSMEMFILE) U4(
+	instr_mem #(INSMEMFILE) U4(
 		// Outputs
-		.data_out(IF_Ins), 
+		.instr_data(IF_Ins), 
 		// Inputs
-		.address_in(IF_PC_out)
+		.addr_in(IF_PC_out)
 	);
 
 
