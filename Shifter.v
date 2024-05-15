@@ -1,9 +1,10 @@
-module Shifter(data_out, data_in);
+module shift (in, out);
+	
+	input [31:0] in;
+	output reg [31:0] out;
 
-    output [31:0] data_out;
-    input [31:0] data_in;
-
-    assign data_out = data_in << 2;
-
+	always @ (*) begin
+		out <= in << 2;
+	end
 
 endmodule

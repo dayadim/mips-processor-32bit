@@ -1,16 +1,16 @@
-module SignExtend(data_out, data_in);
+/*
+don't just sign extend with zero's
 
-  output reg [31:0] data_out;
-  input [15:0] data_in;
+*/
 
-  always@(*) begin
-    if(data_in[15] == 1'b1) begin
-      data_out = {16'hFFFF, data_in};
-    end
-    else begin
-      data_out = {16'b0, data_in};
-    end
-  end
+module sign_extend (in, out);
 
+input [15:0] in;
+output reg [31:0] out;
+
+always @(*) begin
+	if (in[15] == 1'b1) out = {16'hFFFF, in};
+	else out = {16'b0, in};
+end
 
 endmodule

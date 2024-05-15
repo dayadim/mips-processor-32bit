@@ -209,27 +209,27 @@ HazardUnit U9(
 	);
 	
 	// module SignExtend(data_out, data_in);
-	SignExtend U11(
+	sign_extend U11(
 		// Outputs
-		.data_out(ID_SE_out),
+		.out(ID_SE_out),
 		// Inputs
-		.data_in(IFID_Ins[15:0])
+		.in(IFID_Ins[15:0])
 	);
 
 	// module Shifter(data_out, data_in);
-	Shifter U12(
+	shift U12(
 		// Outputs
-		.data_out(ID_BS_2_out),
+		.out(ID_BS_2_out),
 		// Inputs
-		.data_in(ID_SE_out)
+		.in(ID_SE_out)
 	);
 
 	// module Shifter(data_out, data_in);
-	Shifter U13(
+	shift U13(
 		// Outputs
-		.data_out(ID_Jump_2_out),
+		.out(ID_Jump_2_out),
 		// Inputs
-		.data_in({6'b0,IFID_Ins[25:0]})
+		.in({6'b0,IFID_Ins[25:0]})
 	);
 
 	adder U14(
