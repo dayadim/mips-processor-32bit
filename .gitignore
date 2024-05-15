@@ -1,0 +1,14 @@
+*.wlf
+*.zip
+*.bak
+*.vcd
+*.o
+*.pdf
+*.out
+*.pptx
+*.
+.DS_Store
+/work/
+transcript
+*.mpf
+*.mti
