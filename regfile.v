@@ -29,9 +29,12 @@ always @(negedge clk) begin
 	if (regwrite) regfile[addr_write_reg] <= write_data;
 end
 
+always @ (*) begin
+	regfile[0] <= 32'b0;	//set reg 0 to zero	//workaround
+end
+
 assign read_data_1 = regfile[addr_1];
 assign read_data_2 = regfile[addr_2];
-//assign read_v0 = regfile[2];		//delete latere
 
 endmodule
 
