@@ -1,105 +1,92 @@
 `timescale 1ns/1ps
 module top_module (clock, reset);
+	input clock, reset;
 	localparam instructionFile = "Program.txt";
 	localparam dataFile = "Memory.txt";
 
-	/*********FGPA Inputs********/
-	input clock, reset;
-	/****************************/
-
-	/**********IF Vars***********/
+	//IF stage
 	wire [31:0] IF_addr_out, IF_addr_in, IF_addrPlus4, IF_instr, IF_b_mux_out, IF_jump_mux_out;
 	wire IF_addr_wr;
-	/****************************/
 
-	/*********IFID Vars**********/
+	//ID
 	wire [31:0] IF_ID_instr_in, IF_ID_addr_out;
 	wire IF_ID_wr_en;
-	/****************************/
 
-	/**********ID Vars***********/
+	//ID
 	wire [31:0] ID_signExt_out, ID_br_shifted__out, ID_jump_shifted_out, ID_br_out, ID_r1_out, ID_r2_out;
 	wire [1:0] ID_WB, ID_Mem;
 	wire [3:0] ID_Exec;
 	wire [7:0] ID_Exec_Mux_out;
 	wire ID_flush_signal, ID_jump, ID_br, ID_cmp_out, ID_nop_signal;
-	/****************************/
 
-	/**********EX Vars***********/
-	wire [31:0] EX_r1_out, EX_r2_out, EX_sel, EX_mux_fwd1, EX_mux_fwd2, EX_ALUSrc_mux_out, EX_ALU_out;
+	//EX
+	wire [31:0] EX_r1_out, EX_r2_out, EX_sel, EX_mux_fwdA, EX_mux_fwdB, EX_ALUSrc_mux_out, EX_ALU_out;
 	wire [1:0] EX_WB, EX_Mem;
 	wire [3:0] EX_Exec, EX_ALU_control;
 	wire [4:0] EX_rt, EX_rd, EX_rs, EX_rd_mux_out;
 	wire [1:0] EX_fwdA, EX_fwdB;
 	wire EX_zero;
-	/****************************/
 
-	/**********MEM Vars**********/
+	//MEM
 	wire [31:0] MEM_ALU, MEM_wrData, MEM_data_out, MEM_br_mux_out;
 	wire [1:0] MEM_WB, MEM_mem;
 	wire [4:0] MEM_rd;
-	/****************************/
 
-	/**********WB Vars***********/
+	//WB
 	wire [31:0] WB_ALU, WB_dataMem;
 	wire [1:0] WB_WB;
 	wire [4:0] WB_rd;
-	/****************************/
 
-	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
-	mux_2to1_32bit U0(
-		// Outputs
+//begin rest of tb
+	mux_2to1_32bit U0_IF_branchMux(
+		//out
 		.out(IF_b_mux_out),
-		// Inputs
+		//in
 		.in1(IF_addrPlus4), 
 		.in2(ID_br_out), 
 		.sel(ID_br)
 	); 
 
-	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
-	mux_2to1_32bit U1(
-		// Outputs
+	mux_2to1_32bit U1_IF_jumpMux(
+		//out
 		.out(IF_jump_mux_out),
-		// Inputs
+		//in
 		.in1(IF_b_mux_out),
 		.in2({IF_addrPlus4[31:28], ID_jump_shifted_out[27:0]}),
 		.sel(ID_jump)
 	);
 
-	// module PCReg(address_out, address_in, clk, reset_in, write_in);
-	PC U2(
-		// Outputs
+	PC U2_IF_PC(
+		//out
 		.addr_out(IF_addr_out), 
-		// Inputs
+		//in
 		.addr_in(IF_jump_mux_out), 
 		.clk(clock),
 		.rst(reset), 
 		.write_en(IF_addr_wr)
 	);
 
-	adder U3(
-		// Outputs
+	adder U3_IF_adder(
+		//out
 		.sum(IF_addrPlus4), 
-		// Inputs
+		//in
 		.in1(IF_addr_out), 
 		.in2(32'h4)
 	);
 
-	// module InstructionMemory #(FILE = "") (data_out, address_in);
-	instr_mem #(instructionFile) U4(
-		// Outputs
+	instr_mem #(instructionFile) U4_IF_instrMem(
+		//out
 		.instr_data(IF_instr), 
-		// Inputs
+		//in
 		.addr_in(IF_addr_out)
 	);
 
-
-	// module IFID_Reg(Ins_out, PC_in, PC_out, Ins_in, write_in, clk, reset_in, flush_in);
-IF_ID_reg U5 (
-	// Outputs
+//------------------------------------ID stage
+IF_ID_reg U5_IFIDREG(
+	//out
 	.instr_out(IF_ID_instr_in),
 	.addr_out(IF_ID_addr_out),
-	// Inputs
+	//in
 	.addr_in(IF_addrPlus4),
 	.instr_in(IF_instr),
 	.wr_en(IF_ID_wr_en),
@@ -108,53 +95,46 @@ IF_ID_reg U5 (
 	.flush(ID_flush_signal)
 );
 
-															
-	
-	// module Control(WB_out, M_out, EX_out, Jmp_out, Branch_out, Ins_in);
-	Control U6(
-		// Outputs
+
+	Control U6_ID_control(
+		//out
 		.WB(ID_WB),
 		.MEM(ID_Mem),
 		.EX(ID_Exec),
 		.jump(ID_jump),
 		.branch(ID_br),
-		// Inputs
+		//in
 		.instruction(IF_ID_instr_in[31:26])
 	);
 
-	// module RegisterFile(clk, data_in, Address_R1_in, Address_R2_in, Address_WriteReg_in, RegWrite_in, R1_out, R2_out);
-Registers U7(
-    // Outputs
+Registers U7_ID_regfile(
+    //out
     .read_data_1(ID_r1_out),
     .read_data_2(ID_r2_out),
-    //.read_v0(v0_wire), // Commented out as v0_wire is not an output of the module
-    // Inputs
+    //in
     .clk(clock), 
-    .regwrite(WB_WB[1]), // Assuming WB_WB[1] is the regwrite signal
+    .regwrite(WB_WB[1]), // assuming WB_WB[1] is the regwrite signal
     .write_data(MEM_br_mux_out),
     .addr_1(IF_ID_instr_in[25:21]),
     .addr_2(IF_ID_instr_in[20:16]),
     .addr_write_reg(WB_rd)
 );
 
-
-	// module Comparator(bool_out, data1_in, data2_in);
-	Comparator U8(
-		// Outputs
+	Comparator U8_ID_comp(
+		//out
 		.out(ID_cmp_out),
-		// Inputs
+		//in
 		.in1(ID_r1_out),
 		.in2(ID_r2_out)
 	);
 
-	// module HazardUnit(IDEXMemRead_in, EXMEMMemRead_in, EXMEMMemToReg_in, IDEXRegt_in, EXMEMRegt_in, IFIDRegs_in, IFIDRegt_in, branch_in, ComparatorResult_in, jmp_in, IFIDWrite_out, PCWrite_out, NOP_out, FLUSH_out);
-HazardUnit U9(
-	// Outputs
+HazardUnit U9_ID_hzdUnit(
+	//out
 	.IF_ID_wr_en(IF_ID_wr_en),
 	.PC_wr_en(IF_addr_wr),
 	.nop_flag(ID_nop_signal),
 	.flush_flag(ID_flush_signal),
-	// Inputs
+	//in
 	.ID_EX_MemRead(EX_Mem[1]),
 	.EX_MEM_MemRead(MEM_mem[1]),
 	.EX_MEM_memToReg(MEM_WB[0]),
@@ -168,52 +148,47 @@ HazardUnit U9(
 );
 
 
-	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
-	mux_2to1_8bit U10(
-		// Outputs
+	mux_2to1_8bit U10_ID_nopMux(
+		//out
 		.out(ID_Exec_Mux_out),
-		// Inputs
+		//in
 		.in1({ID_WB,ID_Mem, ID_Exec}),
 		.in2(8'b0),
 		.sel(ID_nop_signal)
 	);
 	
-	// module SignExtend(data_out, data_in);
-	sign_extend U11(
-		// Outputs
+	sign_extend U11_ID_signExt(
+		//out
 		.out(ID_signExt_out),
-		// Inputs
+		//in
 		.in(IF_ID_instr_in[15:0])
 	);
 
-	// module Shifter(data_out, data_in);
-	shift U12(
-		// Outputs
+	shift U12_ID_brShifter(
+		//out
 		.out(ID_br_shifted__out),
-		// Inputs
+		//in
 		.in(ID_signExt_out)
 	);
 
-	// module Shifter(data_out, data_in);
-	shift U13(
-		// Outputs
+	shift U13_ID_jumpShifter(
+		//out
 		.out(ID_jump_shifted_out),
-		// Inputs
+		//in
 		.in({6'b0,IF_ID_instr_in[25:0]})
 	);
 
-	adder U14(
-		// Outputs
+	adder U14_brAddedShifter(
+		//out
 		.sum(ID_br_out),
-		// Inputs
+		//in
 		.in1(IF_ID_addr_out),
 		.in2(ID_br_shifted__out)
 	);
-	
 
-	// module IDEX_Reg(WB_in,  M_in,  EX_in,  Reg1Data_in, Reg2Data_in,  Sext_in,  Regt_in, Regd_in, Regs_in, WB_out, M_out, EX_out, Reg1Data_out, Reg2Data_out, Sext_out, Regt_out, Regd_out, Regs_out, clk, reset_in);
-ID_EX_reg U15(
-	// Outputs
+//----------------------------EX
+ID_EX_reg U15_IDEXREG(
+	//out
 	.WB_out(EX_WB),
 	.M_out(EX_Mem),
 	.EX_out(EX_Exec),
@@ -223,7 +198,7 @@ ID_EX_reg U15(
 	.rt_out(EX_rt),
 	.rd_out(EX_rd),
 	.rs_out(EX_rs),
-	// Inputs
+	//in
 	.clk(clock),
 	.rst(reset),
 	.WB_in(ID_Exec_Mux_out[7:6]),
@@ -237,65 +212,60 @@ ID_EX_reg U15(
 	.rs(IF_ID_instr_in[25:21])
 );
 
-	// module MUX3to1(data_out, data1_in, data2_in, data3_in, sel_in);
-	MUX3to1 U16(
-		// Outputs
-		.dataOut(EX_mux_fwd1), 
-		// Inputs
+	MUX3to1 U16_EX_muxFwdA(
+		//out
+		.dataOut(EX_mux_fwdA), 
+		//in
 		.in1(EX_r1_out), 
 		.in2(MEM_br_mux_out), 
 		.in3(MEM_ALU),
 		.sel_in(EX_fwdA)
 	); 
 
-	// module MUX3to1(data_out, data1_in, data2_in, data3_in, sel_in);
-	MUX3to1 U17(
-		// Outputs
-		.dataOut(EX_mux_fwd2), 
-		// Inputs
+	MUX3to1 U17_EX_muxFWDB(
+		//out
+		.dataOut(EX_mux_fwdB), 
+		//in
 		.in1(EX_r2_out), 
 		.in2(MEM_br_mux_out), 
 		.in3(MEM_ALU),
 		.sel_in(EX_fwdB)
 	);
-	
-	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
-	mux_2to1_32bit U18(
-		// Outputs
+
+	mux_2to1_32bit U18_EX_muxALUSrc(
+		//out
 		.out(EX_ALUSrc_mux_out),
-		// Inputs
-		.in1(EX_mux_fwd2),
+		//in
+		.in1(EX_mux_fwdB),
 		.in2(EX_sel),
 		.sel(EX_Exec[0])
 	);
 
-	// module ALUControl(ALUOp_in, Funct_in, Data_out);
-	ALU_controller U19(
-		// Outputs
+	ALU_controller U19_EX_ALUControl(
+		//out
 		.ALUOp_out(EX_ALU_control),
-		// Inputs
+		//in
 		.ALUOp_in(EX_Exec[2:1]),
 		.funct_code(EX_sel[5:0])
 	);
 
-	// module ALU(data_out, ZEROFLAG_out, data1_in, data2_in, ALUOp_in);
-	ALU U20(
-		// Inputs
-		.in1(EX_mux_fwd1),
+	ALU U20_EX_ALU(
+		//in
+		.in1(EX_mux_fwdA),
 		.in2(EX_ALUSrc_mux_out),
 		.ALUOp_in(EX_ALU_control),
-		// Outputs
+		//out
 		.result(EX_ALU_out),
 		.zeroFlag(EX_zero)
 
 	);
 
-	// module ForwardingUnit(IDEXRegs_in, IDEXRegt_in, EXMEMRegWrite_in, EXMEMRegd_in, MEMWBRegd_in, MEMWBRegWrite_in, ForwardA_out, ForwardB_out);
-forwarding_unit U21 (
-	// Outputs
+
+forwarding_unit U21_EX_fwdUnit(
+	//out
 	.fwd_A(EX_fwdA),
 	.fwd_B(EX_fwdB),
-	// Inputs
+	//in
 	.ID_EX_rs(EX_rs),
 	.ID_EX_rt(EX_rt),
 	.EX_MEM_write(MEM_WB[1]),
@@ -304,59 +274,52 @@ forwarding_unit U21 (
 	.MEM_WB_write(WB_WB[1])
 );
 
-
-	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
-	mux_2to1_5bit U22(
-		// Outputs
+	mux_2to1_5bit U22_EX_muxRegsTrans(
+		//out
 		.out(EX_rd_mux_out),
-		// Inputs
+		//in
 		.in1(EX_rt),
 		.in2(EX_rd),
 		.sel(EX_Exec[3])
 	);
-	
-	
-	// module EXMEM_Reg(WB_out, M_out, ALUData_out, WriteData_out, Regd_out, WB_in, M_in, ALUData_in, WriteData_in, Regd_in, clk, reset_in);
-	ExMemReg U23(
-		// Outputs
+
+//-----------------------------MEM
+
+	ExMemReg U23_EXMEMREG(
+		//out
 		.WBOut(MEM_WB),
 		.MemOut(MEM_mem), 
 		.ALUOut(MEM_ALU), 
 		.WriteOut(MEM_wrData), 
 		.RegdOut(MEM_rd),
-		// Inputs
+		//in
 		.WBIn(EX_WB), 
 		.MemIn(EX_Mem), 
 		.ALUIn(EX_ALU_out), 
-		.WriteIn(EX_mux_fwd2), 
+		.WriteIn(EX_mux_fwdB), 
 		.RegdIn(EX_rd_mux_out), 
 		.reset(reset),
 		.clk(clock)
 	);
 		
-
-	
-
-	// module DataMemory #(FILE = "") (data_out, data_in, address_in, write_in, clk);
-	data_mem #(dataFile) U24(
-		// Outputs
+	data_mem #(dataFile) U24_MEM_dataMem(
+		//out
 		.data_out(MEM_data_out),
-		// Inputs
+		//in
 		.data_in(MEM_wrData),
 		.addr_in(MEM_ALU),
 		.wr_en(MEM_mem[0]),
 		.clk(clock)
 	);
-	
 
-	// module MEMWB_Reg(WB_out, Add_out, DataMem_out, Regd_out, WB_in, Add_in, DataMem_in, Regd_in, clk, reset_in);
-	MEM_WB_reg U25(
-		// Outputs
+//-------------------------------WB
+	MEM_WB_reg U25_MEMWBREG(
+		//out
 		.WB_out(WB_WB), 
 		.sum_out(WB_ALU), 
 		.mem_data_out(WB_dataMem), 
 		.rd_out(WB_rd), 
-		// Inputs
+		//in
 		.WB_in(MEM_WB), 
 		.sum_in(MEM_ALU), 
 		.mem_data_in(MEM_data_out),
@@ -365,15 +328,11 @@ forwarding_unit U21 (
 		.rst(reset)
 	);
 
-	
-	// module MUX2to1(data_out, data1_in, data2_in, sel_in);
-	mux_2to1_32bit U26(
+	mux_2to1_32bit U26_WB_lastMux(
 		.out(MEM_br_mux_out),
 		.in1(WB_ALU),
 		.in2(WB_dataMem),
 		.sel(WB_WB[0])
 	);
-
-
 
 endmodule
