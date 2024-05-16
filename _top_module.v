@@ -1,8 +1,8 @@
 `timescale 1ns/1ps
 module top_module (clock, reset);
 	input clock, reset;
-	localparam instructionFile = "Program.txt";
-	localparam dataFile = "Memory.txt";
+	localparam instructionFile = "instructions.txt";
+	localparam dataFile = "data.txt";
 
 	//IF stage
 	wire [31:0] IF_addr_out, IF_addr_in, IF_addrPlus4, IF_instr, IF_b_mux_out, IF_jump_mux_out;
