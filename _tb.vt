@@ -1,0 +1,28 @@
+`timescale 1ns/1ps
+`include "CPU.v"
+module CPU_Test();
+
+    reg clk, reset;
+
+
+    CPU U0(.CLK_IN(clk), .GLOBALRESET(reset));
+
+    initial begin
+        #5{clk,reset} = 2'b01;
+
+        #20 reset = 1'b0;
+
+        #1000 $stop;
+    end
+
+    always
+        #10 clk = ~clk;
+
+    initial begin
+        $dumpfile("CPU.vcd");
+	    $dumpvars(0, CPU_Test);
+
+    end
+
+
+endmodule
