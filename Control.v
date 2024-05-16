@@ -59,9 +59,9 @@ module Control (
 			
 			//addi
 			6'b001000: begin
-				RegDest = 1'bx;
+				RegDest = 0;
 				branch = 0;
-				MemRead = 1'bx;
+				MemRead = 0;
 				MemToReg = 0;
 				ALUOp = 2'b00;
 				MemWrite = 0;
@@ -85,10 +85,10 @@ module Control (
 
 			//sw
 			6'b101011: begin
-				RegDest = 1'bx;
+				RegDest = 0;
 				branch = 0;
 				MemRead = 0;
-				MemToReg = 1'bx;
+				MemToReg = 0;
 				ALUOp = 2'b00;
 				MemWrite = 1;
 				ALUSrc = 1;
@@ -98,7 +98,7 @@ module Control (
 
 			//beq
 			6'b000100: begin
-				RegDest = 1'bx;
+				RegDest = 0;
 				branch = 1;
 				MemRead = 0;
 				MemToReg = 0;
@@ -111,9 +111,9 @@ module Control (
 
 			//jump
 			6'b000010: begin
-				RegDest = 1'bx;
+				RegDest = 0;
 				branch = 0;
-				MemRead = 1'bx;
+				MemRead = 0;
 				MemToReg = 0;
 				ALUOp = 2'b00;
 				MemWrite = 0;
