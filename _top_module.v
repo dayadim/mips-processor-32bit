@@ -25,7 +25,6 @@ module top_module (clock, reset);
 	wire [3:0] EX_Exec, EX_ALU_control;
 	wire [4:0] EX_rt, EX_rd, EX_rs, EX_rd_mux_out;
 	wire [1:0] EX_fwdA, EX_fwdB;
-	wire EX_zero;
 
 	//MEM
 	wire [31:0] MEM_ALU, MEM_wrData, MEM_data_out, MEM_br_mux_out;
@@ -255,9 +254,7 @@ ID_EX_reg U15_IDEXREG(
 		.in2(EX_ALUSrc_mux_out),
 		.ALUOp_in(EX_ALU_control),
 		//out
-		.result(EX_ALU_out),
-		.zeroFlag(EX_zero)
-
+		.result(EX_ALU_out)
 	);
 
 

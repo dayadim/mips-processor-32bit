@@ -2,7 +2,7 @@
 see FIGURE B.5.15 A Verilog behavioral definition of a MIPS ALU
 */
 
-module ALU(result, zeroFlag, in1, in2, ALUOp_in);
+module ALU(result, in1, in2, ALUOp_in);
 	
 								//coming from:
 	input [31:0] in1;			//- reg file?
@@ -12,7 +12,6 @@ module ALU(result, zeroFlag, in1, in2, ALUOp_in);
 							//goes to:	
 	output reg [31:0] result;	//- addr of data mem
 							//	- a 2 to 1 mux after data mem
-	output reg zeroFlag;		//- an and gate
 
 	reg [31:0] hi, lo;
 
@@ -52,8 +51,6 @@ module ALU(result, zeroFlag, in1, in2, ALUOp_in);
 			default: result <= 0;
 
 		endcase
-
-	zeroFlag <= (result == 0);		//hi when 0, lo when 1
 
 	end
 
