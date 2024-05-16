@@ -1,25 +1,19 @@
 `timescale 1ns/1ps
 module tb();
-
     reg clk, reset;
 
-
-    top_module U0(.CLK_IN(clk), .GLOBALRESET(reset));
+    top_module U0(.clock(clk), .reset(reset));
 
     initial begin
-        #5{clk,reset} = 2'b01;
-
-        #20 reset = 1'b0;
-
+        #5
+        clk = 0;
+        reset = 1;
+        #20 reset = 0;
         #1000 $stop;
     end
 
-    always
+    always begin
         #10 clk = ~clk;
-
-    initial begin
-        $dumpfile("CPU.vcd");
     end
-
 
 endmodule
