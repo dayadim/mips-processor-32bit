@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module CPU(CLK_IN, GLOBALRESET);
+module top_module (CLK_IN, GLOBALRESET);
 	localparam INSMEMFILE = "Program.txt";
 	localparam DATAMEMFILE = "Memory.txt";
 
