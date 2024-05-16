@@ -1,9 +1,4 @@
 /*
-INPUTS:
-- address
-omer's is clocked, liam's isn't.
-	TODO: find out why
-
 OUTPUTS:
 	instruction/data output
 
@@ -15,10 +10,6 @@ https://ovisign.com/verilog-verification/verilog-write-read-file-operations/
 
 */
 
-//!!! we need to learn how to use this
-//maybe reduce size?
-
-`timescale 1ns/1ps
 module instr_mem #(parameter FILE = "") (addr_in, instr_data);
 
 	input [31:0] addr_in;

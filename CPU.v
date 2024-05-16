@@ -241,22 +241,22 @@ ID_EX_reg U15(
 	// module MUX3to1(data_out, data1_in, data2_in, data3_in, sel_in);
 	MUX3to1 U16(
 		// Outputs
-		.data_out(EX_MUX_OP1_out), 
+		.dataOut(EX_MUX_OP1_out), 
 		// Inputs
-		.data1_in(EX_Reg1_out), 
-		.data2_in(MEM_BranchMUX_out), 
-		.data3_in(MEM_ALU),
+		.in1(EX_Reg1_out), 
+		.in2(MEM_BranchMUX_out), 
+		.in3(MEM_ALU),
 		.sel_in(EX_ForwardingA)
 	); 
 
 	// module MUX3to1(data_out, data1_in, data2_in, data3_in, sel_in);
 	MUX3to1 U17(
 		// Outputs
-		.data_out(EX_MUX_OP2_out), 
+		.dataOut(EX_MUX_OP2_out), 
 		// Inputs
-		.data1_in(EX_Reg2_out), 
-		.data2_in(MEM_BranchMUX_out), 
-		.data3_in(MEM_ALU),
+		.in1(EX_Reg2_out), 
+		.in2(MEM_BranchMUX_out), 
+		.in3(MEM_ALU),
 		.sel_in(EX_ForwardingB)
 	);
 	

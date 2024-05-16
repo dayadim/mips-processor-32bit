@@ -3,8 +3,6 @@ use readmemh and writememh. similar to ostream
 
 */
 
-`timescale 1ns/1ps
-
 module data_mem #(parameter DATAFILE = "") (clk, wr_en, data_in, addr_in, data_out);
 
 input clk, wr_en;
