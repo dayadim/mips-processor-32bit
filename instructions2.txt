@@ -30,7 +30,7 @@
 0
 0
 0
-2107FFFF		//addi $7 $8 0xFFFF
+21070005		//addi $7 $8 0x000F
 0
 0
 0
@@ -50,11 +50,11 @@ AC070003		//sw $7 0x3($0)
 0
 0
 0
-2107FFFF		//addi $7 $8 0xFFFF (skip)
+21070005		//addi $7 $8 0xFFFF (skip)
 0
 0
 0
-2107FFFF		//addi $7 $8 0xFFFF (skip)
+21070005		//addi $7 $8 0xFFFF (skip)
 0
 0
 0
